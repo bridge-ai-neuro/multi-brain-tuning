@@ -1,11 +1,55 @@
 import torch
 import torch.nn as nn
-
+from models import Wav2VecLoRA, HuBERTLoRA
+import numpy as np 
+import config
 test_stories = ["wheretheressmoke"]
 val_stories = ['itsabox']
-
 increase_epochs = 10  # Epochs to reach the peak learning rate
 total_epochs = 30    # Total number of training epochs
+
+
+def get_model(model_ckpt, out_dim, lora_rank, bottleneck_dim, device):
+    if 'wav2vec' in model_ckpt:
+        model = Wav2VecLoRA(out_dim=out_dim,
+                            bottleneck_dim=bottleneck_dim, lora_rank=lora_rank,
+                            wav2vec_model_name=model_ckpt).to(device)
+    elif 'hubert' in model_ckpt:
+        model = HuBERTLoRA(out_dim=out_dim,
+                           bottleneck_dim=bottleneck_dim, lora_rank=lora_rank,
+                           hubert_model_name=model_ckpt).to(device)
+    return model
+
+def get_loss_function(loss_name):
+    if loss_name == 'cosl2':
+        return cosl2_loss_function
+    elif loss_name == 'corr':
+        return SpatialCorrelationLoss()
+    elif loss_name == 'l2':
+        return nn.MSELoss()
+
+def get_train_params(model, has_bottleneck=False):
+    model_trainable_params = list(filter(lambda p: p.requires_grad, model.lora_model.parameters()))    
+    if has_bottleneck:
+        linear_trainable_params = list(filter(lambda p: p.requires_grad, model.bottleneck.parameters()))
+    else:
+        linear_trainable_params = list(filter(lambda p: p.requires_grad, model.linear.parameters()))
+    return {'model': model_trainable_params, 'linear': linear_trainable_params}
+
+def evaluate(model, dataloader, loss_function, device):
+    # model.eval()
+    total_loss = 0
+    elosses = []
+    with torch.no_grad():
+        for input_wav_tensor, output_signal in dataloader:
+            input_wav_tensor = input_wav_tensor.to(device)
+            output_signal = output_signal.to(device)
+            predictions = model(input_wav_tensor)
+            loss = loss_function(predictions, output_signal)
+            total_loss += loss.item()
+            elosses.append(loss.item()) 
+    return np.mean(elosses)
+
 def schedule_group_0(epoch):
     if epoch == 0:
         return 0.05
