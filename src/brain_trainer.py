@@ -3,8 +3,8 @@ import torch
 import torch.optim as optim
 from argparse import ArgumentParser
 import config
-from data_utils import *
-from train_utils import *
+from utils.downstr_data_utils import *
+from utils.train_utils import *
 from dataset import FMRIStory
 from tqdm import tqdm
 import numpy as np 

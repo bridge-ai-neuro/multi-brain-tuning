@@ -8,7 +8,7 @@ from tqdm import tqdm
 import torch
 import torch.nn as nn
 import torch.optim as optim
-# from src.wav2vec_linear import SimpleLinearModel
+import os 
 import json
 from nltk.tokenize import word_tokenize
 # nltk.download('punkt')
@@ -19,6 +19,7 @@ from torch.nn.utils.rnn import pad_sequence
 import json
 import torch
 # label2idx = json.load(open('../datasets/label2idx.json', 'r'))
+
 
 
 class SimpleLinearModel(nn.Module):
@@ -109,12 +110,6 @@ class CommandDataset(Dataset):
             label = self.map_dict[label]
         return input_vals, label
 
-import os
-import json
-import torchaudio
-from torch.utils.data import Dataset, DataLoader
-import torch
-import pandas as pd
 
 class SLURPDataset(Dataset):
     def __init__(self, json_file, audio_dir, processor, proc_key):

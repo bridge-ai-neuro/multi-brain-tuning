@@ -31,3 +31,10 @@ WAV_PARAMS =  {'sampling_rate': SAMPLING_RATE, 'chunksz_sec': CHUNKSZ_SEC, 'cont
 SAVE_DIR = '../outputs/train_logs'
 SAVE_NAME = 'mean_mp'
 EXP_NAME = 'wav2vec_story_multiple_lora_linear_1e4'
+
+# Evaluation args
+CKPT_SAVE_DIR = '../outputs/train_logs'
+PREDS_SAVE_DIR = '../outputs/preds_results'
+LAYERS_TO_SAVE = [2, 5, 7, 8, 10, 12]
+PRED_MODEL_NAME = 'wav2vec'
+DESIRED_EPOCHS = [3, 5, 10, 20, 30]  # epochs to evaluate

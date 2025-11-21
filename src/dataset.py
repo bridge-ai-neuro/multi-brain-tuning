@@ -161,15 +161,6 @@ class FMRIStory(Dataset):
         
         self.trim_start = trim_start; self.trim_end = trim_end
         
-        # aligned_wav = get_inds2tr_map(self.wav_tensor, self.wav_feat['indices'], self.wav_feat['times'],
-        #                               wordseqs[story_name].tr_times, used_chuncksz_sec=self.wav_params['chunksz_sec'])
-        
-        # self.delayed_wav = make_delayed(aligned_wav, delays)
-        # self.fmri_tensor = torch.tensor(self._load_h5py(os.path.join(self.read_fmri_dir,
-                                                                    #  f'UTS0{self.subject}', f"{story_name}.hf5")))
-        
-        # assert self.delayed_wav.shape[0] == self.fmri_tensor.shape[0], "Wav and FMRI tensor should have the same time dimension"
-        
     
     def fetch_data(self):
         # print(f'processing {self.story_name} for subject {self.subject}')
@@ -188,7 +179,7 @@ class FMRIStory(Dataset):
         return self.delayed_wav[index], self.fmri_tensor[index]
   
     def __len__(self):
-        return len(self.delayed_wav)#self.fmri_tensor.shape[0]
+        return len(self.delayed_wav)
     
     def _load_h5py(self, file_path, key=None):   
 
